@@ -1,18 +1,27 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-// For part 1, step 3, i have to import the database that i added in the 
-// db folder which is index.file:
-const db = require('./db/index')
-
-//To test part 1: in app.js, temporarily add:
-// db.authenticate().then(() => 
-//   console.log("DB connected")).catch(console.error)
-
 
 
 // TODO: Workshop Part 1: import your db connection from ./db once it's wired up.
 // TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined.
+
+// For part 1, step 3, i have to import the database that i added in the 
+// db folder which is index.file:
+const db = require('./db/index')
+// this also works, since the router will automatically looking for the index file.
+// const db = require('./db') 
+// end part 1 step 3.
+
+//To test part 1: in app.js, temporarily add:
+// db.authenticate().then(() => 
+//   console.log("DB connected")).catch(console.error)
+// end test.
+
+
+// Part 3: Create the Table
+//Import your Book model (this is what registers it with the connection).
+const Book = require('./models/book')
 
 const app = express();
 const PORT = 8080;
@@ -152,7 +161,53 @@ async function startApp() {
   // model. Call the sync method on your db connection and await it — the
   // table must exist before app.listen lets any request in.
 
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  // This is need to in the startApp function
+  // make sure the created the table first then started the server.
+
+// first try:
+//   try{
+//     await db.async()
+//     console.log("Database async!")
+//   }.then app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// } catch(error){
+//   console.log("Error!")
+
+//   }
+// end first try
+
+// 3.1-Try to connect and create tables (db.sync).
+// 3.2-Wait until the tables are ready, then log a success message.
+// 3.3-Then open the gates for web traffic (app.listen).
+// 3.4-If anything breaks, do not open the server; log a failure report instead.
+
+// second try: 
+  // try {
+  //   //Sync our JavaScript models to the PostgreSQL database to create the table.
+  //   // Do not move to the next line until this is completely finished.
+  //   await db.sync()
+  //   console.log("Database synced!")
+
+  //   //Now that the database is completely ready, 
+  //   //open up Express to start accepting incoming web requests from clients on port 8080
+  //   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    
+  //   ////If anything in the try block failed, intercept that error right here so we can look at it.
+  //   } catch (error) {
+  //     console.error("Failed synced Database.")
+  //   }
+
+// revised：
+  try {
+    await db.sync()
+    console.log("Database synced!")
+
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    
+    } catch (error) {
+      console.error("Failed synced Database.")
+    }
 }
+// Then use this command to test out: psql -U postgres -d books_api -c "\dt"
+// Part 3 end
 
 startApp();
