@@ -1,6 +1,16 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+// For part 1, step 3, i have to import the database that i added in the 
+// db folder which is index.file:
+const db = require('./db/index')
+
+//To check first step:
+// Check it: in app.js, temporarily add:
+db.authenticate().then(() => 
+  console.log("DB connected")).catch(console.error)
+
+
 
 // TODO: Workshop Part 1: import your db connection from ./db once it's wired up.
 // TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined.
