@@ -5,10 +5,9 @@ const cors = require("cors");
 // db folder which is index.file:
 const db = require('./db/index')
 
-//To check first step:
-// Check it: in app.js, temporarily add:
-db.authenticate().then(() => 
-  console.log("DB connected")).catch(console.error)
+//To test part 1: in app.js, temporarily add:
+// db.authenticate().then(() => 
+//   console.log("DB connected")).catch(console.error)
 
 
 
