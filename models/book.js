@@ -15,25 +15,25 @@ const dbConnection = require('../db') // this is the defalut to find the index
 const Book = dbConnection.define('book', {
     // Use object format to define the fields:
     title:{
-        type: STRING, // use a "," after, not a ';'
+        type: DataTypes.STRING, // use a "," after, not a ';'
         allowNull : false
     }, // use a "," after, not a ';'
     
     author:{
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
 
     genre:{
-        type: STRING,
+        type: DataTypes.STRING,
     },
     
     publishedYear:{
-        type: INTEGER
+        type: DataTypes.INTEGER
     },
 
     available:{
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: true
     }
 

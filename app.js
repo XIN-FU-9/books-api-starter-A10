@@ -107,18 +107,19 @@ app.post("/api/books", async (request, response, next) => {
   try {
     const { title, author, genre } = request.body;
 
-    const newBook = {
-      // id: nextId,
-      title,
-      author,
-      genre,
-      available: true,
-    };
+    // const newBook = {
+    //   // id: nextId,
+    //   title,
+    //   author,
+    //   genre,
+    //   available: true,
+    // };
     // nextId++; 
 
     // books.push(newBook);
-    await Book.create({newBook}) // this line already include pushing.
-
+    const newBook = await Book.create({title, author, genre})
+    // await Book.create(newBook) // this line already include pushing.
+    
     response.status(201).json(newBook);
   } catch (error) {
     next(error);
@@ -251,7 +252,7 @@ async function startApp() {
       console.error("Failed synced Database.")
     }
 } 
-racecar
+
 
 // Then use this command to test out: psql -U postgres -d books_api -c "\dt"
 // Part 3 end
