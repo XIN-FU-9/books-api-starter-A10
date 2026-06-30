@@ -54,9 +54,10 @@ app.get("/", (request, response) => {
 
 // Part 3: GET all books
 // TODO: Workshop: swap `books` for the Book method that returns every row.
-app.get("/api/books", (request, response, next) => {
+app.get("/api/books", async (request, response, next) => {
   try {
-    response.json(books);
+    const getALLRow = await Book.findAll() //modified: when i use corectly the modle's name it will automatically show me the keywords. (it is Book not books)
+    response.json(getALLRow); // change to getAllRow
   } catch (error) {
     next(error);
   }
@@ -65,15 +66,34 @@ app.get("/api/books", (request, response, next) => {
 // Part 4: GET one book by id
 // TODO: Workshop: swap `.find()` for the Book method that looks up by primary key.
 // It returns null when nothing matches — your 404 check below still applies.
-app.get("/api/books/:id", (request, response, next) => {
+// app.get("/api/books/:id", (request, response, next) => {
+//   try {
+//     const id = Number(request.params.id); // request.params.id is always a string — Number() makes it comparable
+//     const book = books.find((b) => b.id === id);
+
+//     if (!book) {
+//       return response.sendStatus(404);
+//     }
+
+//     response.json(book);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// Part 4: modified:
+app.get("/api/books/:id", async (request, response, next) => {
   try {
     const id = Number(request.params.id); // request.params.id is always a string — Number() makes it comparable
-    const book = books.find((b) => b.id === id);
+    // const book = books.find((b) => b.id === id); // we will use database instead of using hardcode, so we need to change it.
+    // const getOneBook = await Book.findOne({
+    //   where : {}
+    // }) // we don't need this line since we are searching by id, which is PK.
+    const book = await Book.findByPk(id) // we need passing by the id.
 
     if (!book) {
       return response.sendStatus(404);
     }
-
     response.json(book);
   } catch (error) {
     next(error);
@@ -83,20 +103,21 @@ app.get("/api/books/:id", (request, response, next) => {
 // Part 5: POST a new book
 // TODO: Workshop: swap the manual id/push for the Book method that creates a row
 // directly from req.body. nextId goes away — the database assigns the id now.
-app.post("/api/books", (request, response, next) => {
+app.post("/api/books", async (request, response, next) => {
   try {
     const { title, author, genre } = request.body;
 
     const newBook = {
-      id: nextId,
+      // id: nextId,
       title,
       author,
       genre,
       available: true,
     };
-    nextId++;
+    // nextId++; 
 
-    books.push(newBook);
+    // books.push(newBook);
+    await Book.create({newBook}) // this line already include pushing.
 
     response.status(201).json(newBook);
   } catch (error) {
@@ -107,18 +128,39 @@ app.post("/api/books", (request, response, next) => {
 // Part 6: PATCH an existing book — only changes the fields that were sent
 // TODO: Workshop: find the book the same Sequelize way as the GET-one route above,
 // then call the instance method that updates it in place with req.body.
-app.patch("/api/books/:id", (request, response, next) => {
+// app.patch("/api/books/:id", (request, response, next) => {
+//   try {
+//     const id = Number(request.params.id);
+//     const book = books.find((b) => b.id === id);
+
+//     if (!book) {
+//       return response.sendStatus(404);
+//     }
+
+//     Object.assign(book, request.body);
+
+//     response.status(200).json(book);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// modified:
+app.patch("/api/books/:id", async(request, response, next) => {
   try {
     const id = Number(request.params.id);
-    const book = books.find((b) => b.id === id);
+    // const book = books.find((b) => b.id === id);
+    const getALLRow = await Book.findByPk(id) // since we need to find the exact one, so we need to us findByPK(id)
 
-    if (!book) {
+    if (!getALLRow) {
       return response.sendStatus(404);
     }
 
-    Object.assign(book, request.body);
+    // Object.assign(book, request.body); // request.body is the user's input filed.
+    getALLRow.update(request.body)
+    await Book.Save()
 
-    response.status(200).json(book);
+    // response.status(200).json(book);
   } catch (error) {
     next(error);
   }
@@ -127,16 +169,18 @@ app.patch("/api/books/:id", (request, response, next) => {
 // Part 7: DELETE a book
 // TODO: Workshop: find the book first, same as above, then call the instance
 // method that removes itself — no more findIndex/splice.
-app.delete("/api/books/:id", (request, response, next) => {
+app.delete("/api/books/:id", async (request, response, next) => {
   try {
     const id = Number(request.params.id);
-    const indexToDelete = books.findIndex((b) => b.id === id);
+    // const indexToDelete = books.findIndex((b) => b.id === id);
+    const deleteOneBook = await Book.findByPk(id)
 
-    if (indexToDelete === -1) {
+    if (!deleteOneBook) {
       return response.sendStatus(404);
     }
 
-    books.splice(indexToDelete, 1);
+    // books.splice(deleteOneBook, 1);
+    await deleteOneBook.destroy()
 
     response.sendStatus(204); // 204 No Content — no body on a successful delete
   } catch (error) {
@@ -206,7 +250,9 @@ async function startApp() {
     } catch (error) {
       console.error("Failed synced Database.")
     }
-}
+} 
+racecar
+
 // Then use this command to test out: psql -U postgres -d books_api -c "\dt"
 // Part 3 end
 
