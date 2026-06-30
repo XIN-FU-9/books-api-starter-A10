@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 
+
 // TODO: Workshop Part 1: import your db connection from ./db once it's wired up.
 // TODO: Workshop Part 2: import your Book model from ./models/Book once it's defined.
 
@@ -32,15 +33,15 @@ app.use(morgan("dev")); // logs method + url for every request
 app.use(cors()); // allows a future frontend (different origin) to call this API
 
 // in-memory data ------------------------------------
-let books = [
-  { id: 1, title: "The Pragmatic Programmer", author: "David Thomas", genre: "Tech", available: true },
-  { id: 2, title: "Educated", author: "Tara Westover", genre: "Memoir", available: true },
-  { id: 3, title: "Dune", author: "Frank Herbert", genre: "Sci-Fi", available: false },
-  { id: 4, title: "Sapiens", author: "Yuval Noah Harari", genre: "History", available: true },
-  { id: 5, title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction", available: true },
-];
+// let books = [
+//   { id: 1, title: "The Pragmatic Programmer", author: "David Thomas", genre: "Tech", available: true },
+//   { id: 2, title: "Educated", author: "Tara Westover", genre: "Memoir", available: true },
+//   { id: 3, title: "Dune", author: "Frank Herbert", genre: "Sci-Fi", available: false },
+//   { id: 4, title: "Sapiens", author: "Yuval Noah Harari", genre: "History", available: true },
+//   { id: 5, title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction", available: true },
+// ];
 
-let nextId = 6; // use this for any new book you create
+// let nextId = 6; // use this for any new book you create
 
 // routes --------------------------------------------
 // TODO: Workshop Part 4: one at a time, swap the array logic below for a real
@@ -256,5 +257,15 @@ async function startApp() {
 
 // Then use this command to test out: psql -U postgres -d books_api -c "\dt"
 // Part 3 end
+
+async function startApp(){
+await db.sync({
+
+})
+
+console.log('DB conneted ....')
+app.listen(PORT, ()=> console.log('Server running on port ${PORT}'));
+
+}
 
 startApp();
